@@ -30,7 +30,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 #Evaluation
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from sklearn.metrics import (brier_score_loss, precision_score, recall_score, f1_score)
+from sklearn.metrics import brier_score_loss, precision_score, recall_score, f1_score
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 
 #Save model
