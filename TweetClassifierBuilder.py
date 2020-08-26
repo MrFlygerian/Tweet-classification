@@ -167,7 +167,7 @@ def test_models(x_train, y_train, x_test, y_test):
 
 
 #Load data and extract inputs and outputs
-data_df = pd.read_csv('train.csv')
+data_df = pd.read_csv(r'.\Data\train.csv')
 data_df = data_df.fillna(0)
 
 texts = data_df.drop(['target', 'id'], axis = 1)
