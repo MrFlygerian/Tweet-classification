@@ -1,34 +1,34 @@
-#Data Manipulation
+# Data Manipulation
 import pandas as pd
 pd.set_option('use_inf_as_na', True)
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-#tweets processing
+# tweets processing
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
 import re
 from nltk.tokenize import word_tokenize
-from string import punctuation 
+from string import punctuation
 from nltk.corpus import stopwords
 
-#Visual modules
+# Visual modules
 from PIL import Image
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-#Converting words to numbers (bags of words)
+# Converting words to numbers (bags of words)
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 
-#Algorithms
+# Algorithms
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
-#Evaluation
+# Evaluation
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.metrics import brier_score_loss, precision_score, recall_score, f1_score
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
@@ -37,7 +37,7 @@ from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 import pickle
 
 
-#CONSTANTS
+# CONSTANTS
 TWITTER_LOGO = 'Twitter logo 2012.png'
 EXTRA_WORDS = 'extra_words.txt'
 TRAIN_FILE = 'train.csv'
@@ -49,7 +49,7 @@ MODEL_FILE = 'some-model'
 
 #------------------------------------------------------------Functions----------------------------------------------
 def plot_calibration_curve(est, name, fig_index):
-    
+
     print(__doc__)
 
 # Author: Alexandre Gramfort <alexandre.gramfort@telecom-paristech.fr>
@@ -111,17 +111,17 @@ def plot_calibration_curve(est, name, fig_index):
     plt.tight_layout()
 
 def make_cloud(word_tokens, image_file_path):
-    
+
     word_str = ' '.join(word_tokens)
-    
+
     mask = Image.open(image_file_path)
     img_mask = Image.new(mode='RGB', size=mask.size, color = (255,255,255))
     img_mask.paste(mask, box = mask)
-    
-    rgb_array = np.array(img_mask)
-    
 
-    cloud = WordCloud(font_path=r'C:\Users\bless\OneDrive\Documents\Python Scripts\Throwaways\Training\Udemy\original\SpamData\01_Processing\wordcloud_resources\OpenSansCondensed-Light.ttf',
+    rgb_array = np.array(img_mask)
+
+
+    cloud = WordCloud(font_path=r'C:\Users\bless\Python Scripts\Twitter Projects\WordClouds\GatsbyFLF-BoldItalic.ttf',
                   mask=rgb_array,background_color='black',
                   max_words=600, colormap = 'Set3')
 
@@ -133,25 +133,25 @@ def make_cloud(word_tokens, image_file_path):
 def ProcessTweet(tweet):
     extra_words = (pd.read_table(EXTRA_WORDS, header = None))[0].values.tolist()
     _stopwords = set(stopwords.words('english') + list(punctuation) + ['AT_USER','URL'] + extra_words)
-    
+
     tweet = tweet.lower() # convert tweets to lower-case
     tweet = re.sub('((www\.[^\s]+)|(https?://[^\s]+))', 'URL', tweet) # remove URLs
     tweet = re.sub('@[^\s]+', 'AT_USER', tweet) # remove usernames
     tweet =  re.sub(r'#([^\s]+)', r'\1', tweet) # remove the # in #hashtag
     tweet =  word_tokenize(tweet) # remove repeated characters (helloooooooo into hello)
-    
+
     return [word for word in tweet if word not in _stopwords]
 
 def test_models(x_train, y_train, x_test, y_test):
     fitted_models = []
-    
+
     models = {'NB': GaussianNB(),
               'SVC': LinearSVC(max_iter = 1000),
               'LR': LogisticRegression(C = 0.6),
-              'RF': RandomForestClassifier(n_estimators = 200), 
+              'RF': RandomForestClassifier(n_estimators = 200),
               'SVC calibrated':CalibratedClassifierCV((LinearSVC(max_iter = 10000)), cv = 2, method = 'sigmoid'),
               'LR calibrated': CalibratedClassifierCV(LogisticRegression(), method = 'sigmoid',cv = 2)}
-    
+
     for name, model in models.items():
         classifier = model.fit(X_train, y_train)
         y_pred = classifier.predict(x_test)
@@ -160,14 +160,14 @@ def test_models(x_train, y_train, x_test, y_test):
         print('Accuracy score:', round(accuracy_score(y_test, y_pred), 2))
         print(confusion_matrix(y_test, y_pred))
         print(classification_report(y_test, y_pred))
-    
+
     return fitted_models
 #------------------------------------------------------------------------------------------------------------------
 
 
 
 #Load data and extract inputs and outputs
-data_df = pd.read_csv(r'.\Data\train.csv')
+data_df = pd.read_csv(r'..\data\train.csv')
 data_df = data_df.fillna(0)
 
 texts = data_df.drop(['target', 'id'], axis = 1)
@@ -207,31 +207,3 @@ plot_calibration_curve(RandomForestClassifier(), "Random Forest", 3)
 
 #with open(MODEL_FILE, 'wb') as some_model:
 #    pickle.dump(fitted_models[4], some_model)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
